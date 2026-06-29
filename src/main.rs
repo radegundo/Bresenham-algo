@@ -22,6 +22,7 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(Update, grid::draw_grid)
         .add_systems(Update, input_system)
+        .add_systems(Update, get_line)
         .run();
 }
 

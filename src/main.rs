@@ -44,14 +44,14 @@ fn setup(
     }
     //Spawn Start Point
     commands.spawn((
-        Transform::default(),
+        Transform::from_xyz(-100.0, -100.0, 0.0),
         Mesh2d(meshes.add(Circle::new(40.0))),
         MeshMaterial2d(materials.add(ColorMaterial::from(Color::WHITE))),
         StartPoint,
     ));
     //Spawn End Point
     commands.spawn((
-        Transform::default(),
+        Transform::from_xyz(100.0, 100.0, 0.0),
         Mesh2d(meshes.add(Circle::new(40.0))),
         MeshMaterial2d(materials.add(ColorMaterial::from(Color::WHITE))),
         EndPoint,

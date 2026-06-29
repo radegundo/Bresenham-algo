@@ -19,7 +19,7 @@ pub fn get_line(
         let start = grid
             .get_grid_coords(Vec3::new(x0 as f32, y0 as f32, 0.0))
             .unwrap_or(Vec3::ZERO);
-        let end = grid.get_grid_coords(Vec3::new(x0 as f32, y0 as f32, 0.0)).unwrap_or(Vec3::ZERO);
+        let end = grid.get_grid_coords(Vec3::new(x1 as f32, y1 as f32, 0.0)).unwrap_or(Vec3::ZERO);
         let dx = (end.x as i32) - (start.x as i32);
         let dy = (end.y as i32) - (start.y as i32);
 
@@ -29,19 +29,21 @@ pub fn get_line(
         let mut line = vec![];
 
         if dx != 0 {
-            let m = dy / dx;
+            let m = (dy as f32) / (dx as f32);
             let mut y = y0;
+            let mut x = x0;
 
-            for i in 0..dx {
-                let pd = m * i + y0;
-                if pd - y > y + 1 - pd {
-                    line.push(Vec2::new(i as f32, (y as f32) + 1.0));
-                    y = y + 1;
+            for i in 0..dx + 1 {
+                let pd = m * (x as f32) + (y0 as f32);
+                if pd - (y as f32) > (y as f32) + 1.0 - pd {
+                    line.push(Vec2::new(x as f32, (y as f32) + 1.0));
+                    y += 1;
                 } else {
-                    line.push(Vec2::new(i as f32, y as f32));
+                    line.push(Vec2::new(x as f32, y as f32));
                 }
-                println!("{}, {}", i, y);
+                x += 1;
             }
+            println!("{:?}", line);
         }
     }
 }

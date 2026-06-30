@@ -1,3 +1,5 @@
+use std::{ cmp::max, mem::swap };
+
 use bevy::prelude::*;
 use bevy_grid::Grid;
 
@@ -24,20 +26,23 @@ pub fn get_line(
         let dy = (end.y as i32) - (start.y as i32);
 
         let (x0, y0) = (start.x as i32, start.y as i32);
-
-        let mut y = y0;
-        let mut x = x0;
-
-        let x_step = if dx < 0 { -1 } else { 1 };
-        let y_step = if dy < 0 { -1 } else { 1 };
-        let dx_abs = dx.abs();
-        let dy_abs = dy.abs();
+        // let (x1, y1) = (end.x as i32, end.y as i32);
 
         let mut line: Vec<Vec2> = vec![];
 
         if dx != 0 {
+            let x_step = if dx < 0 { -1 } else { 1 };
+            let y_step = if dy < 0 { -1 } else { 1 };
+            let dx_abs = dx.abs();
+            let dy_abs = dy.abs();
+            let d = max(dx_abs, dy_abs);
+            let mut y = y0;
+            let mut x = x0;
+
+            let p = 2 * dy_abs - dx_abs;
+
             if dx_abs >= dy_abs {
-                // x is driving axis
+                // shallow octants: x is driving axis
                 let mut p = 2 * dy_abs - dx_abs;
                 for _ in 0..dx_abs + 1 {
                     line.push(Vec2::new(x as f32, y as f32));
@@ -50,7 +55,7 @@ pub fn get_line(
                     x += x_step;
                 }
             } else {
-                // y is driving axis
+                // steep octants: y is driving axis
                 let mut p = 2 * dx_abs - dy_abs;
                 for _ in 0..dy_abs + 1 {
                     line.push(Vec2::new(x as f32, y as f32));
@@ -63,14 +68,14 @@ pub fn get_line(
                     y += y_step;
                 }
             }
-        } else {
-            for i in 0..dy_abs + 1 {
-                line.push(Vec2::new(x as f32, (y as f32) + (i as f32) * (y_step as f32)));
-            }
-        }
-        for tile in line {
-            if let Some(world_pos) = grid.get_world_coords(&tile.extend(0.0)) {
-                gizmos.circle_2d(Isometry2d::from_xy(world_pos.x, world_pos.y), 10.0, Color::WHITE);
+            for tile in line {
+                if let Some(world_pos) = grid.get_world_coords(&tile.extend(0.0)) {
+                    gizmos.circle_2d(
+                        Isometry2d::from_xy(world_pos.x, world_pos.y),
+                        10.0,
+                        Color::WHITE
+                    );
+                }
             }
         }
     }
